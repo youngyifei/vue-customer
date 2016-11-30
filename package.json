@@ -13,6 +13,11 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
+    "eslint-plugin-promise": "^2.0.1",
+    "keycode": "^2.1.7",
+    "less": "^2.3.1",
+    "less-loader": "^2.2.3",
+    "muse-ui": "^2.0.0-alpha.11",
     "vue": "^2.1.0"
   },
   "devDependencies": {

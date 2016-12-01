@@ -13,12 +13,11 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
-    "eslint-plugin-promise": "^2.0.1",
+    "axios": "^0.15.3",
     "keycode": "^2.1.7",
-    "less": "^2.3.1",
-    "less-loader": "^2.2.3",
-    "muse-ui": "^2.0.0-alpha.11",
-    "vue": "^2.1.0"
+    "mint-ui": "^2.0.5",
+    "vue": "^2.1.0",
+    "vue-router": "^2.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
@@ -55,6 +54,8 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "0.0.26",
     "karma-webpack": "^1.7.0",
+    "less": "^2.3.1",
+    "less-loader": "^2.2.3",
     "lolex": "^1.4.0",
     "mocha": "^3.1.0",
     "chai": "^3.5.0",

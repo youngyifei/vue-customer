@@ -1,16 +1,18 @@
 <template>
   <div class="background">
-    <mt-search v-model="value" class="search">
-      <div style="padding-top:0px;">
+    <Search @change="show">
         <mt-cell v-for="item in result" :title="item.title" :label="item.label" is-link></mt-cell>
-      </div>
-    </mt-search>
+    </Search>
   </div>
 </template>
 
 <script>
+  import Search from './search'
   export default {
     name: 'weekly',
+    components: {
+      Search
+    },
     data () {
       return {
         value: '',
@@ -22,17 +24,12 @@
           {title: '2016年11月第1周周报', label: '个人'}
         ]
       }
+    },
+    methods: {
+      show (value) {
+        this.value = value
+        console.log(this.value)
+      }
     }
   }
 </script>
-<style scoped>
-.background{
-	position: relative;
-}
-.mint-search{
-	height: calc(100vh - 66px);
-}
-.mint-search-list{
-	padding-top: 50px !important;
-}
-</style>

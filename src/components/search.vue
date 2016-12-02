@@ -2,7 +2,7 @@
   <div class="background">
     <mt-search v-model="value" class="search">
       <div style="padding-top:0px;">
-        <mt-cell v-for="item in result" :title="item.title" :label="item.label" is-link></mt-cell>
+        <slot></slot>
       </div>
     </mt-search>
   </div>
@@ -10,17 +10,15 @@
 
 <script>
   export default {
-    name: 'weekly',
+    name: 'search',
     data () {
       return {
-        value: '',
-        result: [
-          {title: '2016年11月第1周周报', label: '个人啊实打实大师打算打算大叔大婶打算'},
-          {title: '2016年11月第1周周报', label: '个人'},
-          {title: '2016年11月第1周周报', label: '个人'},
-          {title: '2016年11月第1周周报', label: '个人'},
-          {title: '2016年11月第1周周报', label: '个人'}
-        ]
+        value: ''
+      }
+    },
+    watch: {
+      value () {
+        this.$emit('change', this.value)
       }
     }
   }

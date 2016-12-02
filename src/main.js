@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import App from './App'
 import MintUI from 'mint-ui'
 import axios from 'axios'
+import router from './router'
 import 'mint-ui/lib/style.css'
 import './assets/mint-icon.css'
 Vue.use(VueRouter)
@@ -19,10 +20,6 @@ Vue.mixin({
 })
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
-  template: '<App/>',
-  components: { App },
-  methods: {
-
-  }
-})
+  router,
+  ...App
+}).$mount('#app')

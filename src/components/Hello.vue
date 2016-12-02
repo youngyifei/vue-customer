@@ -1,21 +1,24 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
+    <h2>周报</h2>
     <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
+      <li><a href="/#/weekly" >周报查询</a></li>
+      <li><a href="/#/weekly" >新增周报</a></li>
       <br>
-      <li><a href="http://vuejs-templates.github.io/webpack/" target="_blank">Docs for This Template</a></li>
+      <br>
+      <li><a href="/#/weekly" >编辑本周周报</a></li>
     </ul>
-    <h2>Ecosystem</h2>
+    <h2>客户</h2>
     <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
+      <li><a href="/#/weekly" >客户查询</a></li>
+      <li><a href="/#/weekly" >新增客户</a></li>
+      <li><a href="/#/weekly" >客户编辑</a></li>
+    </ul>
+    <h2>报单</h2>
+    <ul>
+      <li><a href="/#/weekly" >报单查询</a></li>
+      <li><a href="/#/weekly" >新增报单</a></li>
+      <li><a href="/#/weekly" >报单编辑</a></li>
     </ul>
   </div>
 </template>
@@ -25,7 +28,7 @@ export default {
   name: 'hello',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: '欢迎使用客户系统！'
     }
   }
 }

@@ -1,25 +1,23 @@
 <template>
   <div id="app">
-    <div id="app-bar">
+    <div id="app-bar" style="z-index:20;">
       <mt-header title="大客户系统" style="height:50px;">
+        <mt-button icon="more" slot="right" @click="popupTaggle" >菜单</mt-button>
         <router-link to="/" slot="left">
-          <mt-button icon="more" @click="popupTaggle" >返回</mt-button>
-          <mt-button @click="handleClose">关闭</mt-button>
+          <mt-button icon="back" >返回</mt-button>
         </router-link>
-        <mt-button icon="more" slot="right"></mt-button>
       </mt-header>
-      <mt-popup v-model="popupVisible" position="left" style="height:100%;width:200px;">
+      <mt-popup v-model="popupVisible" position="right" style="height:100%;width:200px;">
         <div style="height:100%;">
-          <mt-cell title="我的报单" is-link></mt-cell>
-          <mt-cell title="我的客户" is-link></mt-cell>
-          <mt-cell title="我的周报" is-link></mt-cell>
-          <mt-cell title="我的信息" is-link></mt-cell>
+          <mt-cell title="我的报单" href="/#/" is-link></mt-cell>
+          <mt-cell title="我的客户" href="/#/" is-link></mt-cell>
+          <mt-cell title="我的周报" href="/#/weekly" is-link></mt-cell>
+          <mt-cell title="我的信息" href="/#/"  is-link></mt-cell>
         </div>
       </mt-popup>
     </div>
-    <div style="margin:64px 0px;width:100%;">
-      <img src="./assets/logo.png">
-      <hello></hello>
+    <div style="padding:50px 0px 0px 0px;width:100%;">
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -68,7 +66,6 @@
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
     color: #2c3e50;
     /*margin-top: 60px;*/
   }
@@ -88,5 +85,11 @@
   }
   .demo-flat-button {
     margin: 12px;
+  }
+  .mint-searchbar-inner{
+    height: 17px !important;
+  }
+  .mint-searchbar input[type=search] {
+    width: 100%;
   }
 </style>

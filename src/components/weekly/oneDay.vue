@@ -54,9 +54,8 @@
     watch: {
       show () {
         if (!this.show) {
-          let me = this
-          setTimeout(function () {
-            me.tShow = me.show
+          setTimeout(() => {
+            this.tShow = this.show
           }, 500)
         } else {
           this.tShow = this.show

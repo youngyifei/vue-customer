@@ -8,7 +8,7 @@
         </router-link>
       </mt-header>
       <mt-popup v-model="popupVisible" position="right" style="height:100%;width:200px;">
-        <div style="height:100%;">
+        <div style="height:100%;overflow-y :auto;">
           <mt-cell title="我的报单" :to="'/'" is-link></mt-cell>
           <mt-cell title="我的客户" :to="'/'" is-link></mt-cell>
           <mt-cell title="我的周报" :to="'/weekly'" is-link></mt-cell>
@@ -17,7 +17,9 @@
       </mt-popup>
     </div>
     <div style="padding:50px 0px 0px 0px;width:100%;">
-      <router-view></router-view>
+      <transition :name="transitionName">
+        <router-view></router-view>
+      </transition>
     </div>
   </div>
 </template>
@@ -38,7 +40,8 @@
         data: {
           token: '74E56A42-4786-4F86-87FC-7685294F34BC',
           workCode: 'WA01658',
-          key: ''}
+          key: ''},
+        transitionName: 'slide-left'
       }
     },
     methods: {
@@ -56,6 +59,13 @@
         .catch(function (error) {
           console.log(error)
         })
+      }
+    },
+    watch: {
+      '$route' (to, from) {
+        const toDepth = to.path.split('/').length
+        const fromDepth = from.path.split('/').length
+        this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
       }
     }
   }

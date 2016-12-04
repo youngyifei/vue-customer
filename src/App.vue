@@ -9,10 +9,10 @@
       </mt-header>
       <mt-popup v-model="popupVisible" position="right" style="height:100%;width:200px;">
         <div style="height:100%;">
-          <mt-cell title="我的报单" href="/#/" is-link></mt-cell>
-          <mt-cell title="我的客户" href="/#/" is-link></mt-cell>
-          <mt-cell title="我的周报" href="/#/weekly" is-link></mt-cell>
-          <mt-cell title="我的信息" href="/#/"  is-link></mt-cell>
+          <mt-cell title="我的报单" :to="'/'" is-link></mt-cell>
+          <mt-cell title="我的客户" :to="'/'" is-link></mt-cell>
+          <mt-cell title="我的周报" :to="'/weekly'" is-link></mt-cell>
+          <mt-cell title="我的信息" :to="'/'"  is-link></mt-cell>
         </div>
       </mt-popup>
     </div>

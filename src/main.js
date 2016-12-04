@@ -5,7 +5,6 @@ import MintUI from 'mint-ui'
 import axios from 'axios'
 import router from './router'
 import 'mint-ui/lib/style.css'
-import './assets/mint-icon.css'
 Vue.use(VueRouter)
 Vue.use(MintUI)
 axios.defaults.baseURL = 'http://127.0.0.1:8081'

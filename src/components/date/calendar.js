@@ -1,57 +1,5 @@
-<template>
-    <div @click.stop=""  class="calendar" v-show="show" :style="{'left':x+'px','top':y+'px'}" transition="calendar" transition-mode="out-in">
-        <div  v-if="type!='time'">
-            <div class="calendar-tools">
-                <span class="calendar-prev" @click="prev">
-                    <svg width="16" height="16" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g class="transform-group"><g transform="scale(0.015625, 0.015625)"><path d="M671.968 912c-12.288 0-24.576-4.672-33.952-14.048L286.048 545.984c-18.752-18.72-18.752-49.12 0-67.872l351.968-352c18.752-18.752 49.12-18.752 67.872 0 18.752 18.72 18.752 49.12 0 67.872l-318.016 318.048 318.016 318.016c18.752 18.752 18.752 49.12 0 67.872C696.544 907.328 684.256 912 671.968 912z" fill="#5e7a88"></path></g></g></svg>
-                </span>
-                <span class="calendar-next"  @click="next">
-                    <svg width="16" height="16" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g class="transform-group"><g transform="scale(0.015625, 0.015625)"><path d="M761.056 532.128c0.512-0.992 1.344-1.824 1.792-2.848 8.8-18.304 5.92-40.704-9.664-55.424L399.936 139.744c-19.264-18.208-49.632-17.344-67.872 1.888-18.208 19.264-17.376 49.632 1.888 67.872l316.96 299.84-315.712 304.288c-19.072 18.4-19.648 48.768-1.248 67.872 9.408 9.792 21.984 14.688 34.56 14.688 12 0 24-4.48 33.312-13.44l350.048-337.376c0.672-0.672 0.928-1.6 1.6-2.304 0.512-0.48 1.056-0.832 1.568-1.344C757.76 538.88 759.2 535.392 761.056 532.128z" fill="#5e7a88"></path></g></g></svg>
-                </span>
-                <div class="text center">
-                    <input type="text" v-model="year" value="{{year}}" @change="render(year,month)" min="1970" max="2100" maxlength="4">
-                     / 
-                    {{monthString}}
-                </div>
-            </div>
-            <table cellpadding="5">
-            <thead>
-                <tr>
-                    <td v-for="week in weeks" class="week">{{week}}</td>
-                </tr>
-             </thead>
-            <tr v-for="(k1,day) in days">
-                <td 
-                v-for="(k2,child) in day" 
-                :class="{'selected':child.selected,'disabled':child.disabled}"
-                @click="select(k1,k2,$event)" @touchstart="select(k1,k2,$event)">
-                <span>{{child.day}}</span>
-                <div class="lunar" v-if="showLunar">{{child.lunar}}</div>
-                </td>
-            </tr>
-            </table>
-        </div>
-        <div class="calendar-time" v-show="type=='datetime'||type=='time'">
- 
-            <div class="timer">
-                <input type="text" v-model="hour" value="{{hour}}" min="0" max="23" maxlength="2">
-                时
-                <input type="text" v-model="minute" value="{{minute}}" min="0" max="59" maxlength="2">
-                分
-                <input type="text" v-model="second" value="{{second}}" min="0" max="59" maxlength="2">
-                秒
-            </div>
-        </div>
-        <div class="calendar-button" v-show="type=='datetime'||type=='time'||range">
-            <span @click="ok">确定</span>
-            <span @click="cancel" class="cancel">取消</span>
-        </div>
-    </div>
-</template>
 
-<script>
   export default {
-    name: 'calendar',
     props: {
       show: {
         type: Boolean,
@@ -128,14 +76,6 @@
         monthString: ''
       }
     },
-    computed: {
-      rangeBeginC: function () {
-        return this.rangeBegin
-      },
-      rangeEndC: function () {
-        return this.rangeEnd
-      }
-    }
     created () {
       this.init()
       // 延迟绑定事件，防止关闭
@@ -193,8 +133,8 @@
             if (split.length > 1) {
               var beginSplit = split[0].split(this.sep)
               var endSplit = split[1].split(this.sep)
-              this.rangeBeginC = [parseInt(beginSplit[0]), parseInt(beginSplit[1] - 1), parseInt(beginSplit[2])]
-              this.rangeEndC = [parseInt(endSplit[0]), parseInt(endSplit[1] - 1), parseInt(endSplit[2])]
+              this.rangeBegin = [parseInt(beginSplit[0]), parseInt(beginSplit[1] - 1), parseInt(beginSplit[2])]
+              this.rangeEnd = [parseInt(endSplit[0]), parseInt(endSplit[1] - 1), parseInt(endSplit[2])]
             }
           }
         } else {
@@ -206,8 +146,8 @@
           this.minute = this.zero(now.getMinutes())
           this.second = this.zero(now.getSeconds())
           if (this.range) {
-            this.rangeBeginC = Array
-            this.rangeEndC = Array
+            this.rangeBegin = Array
+            this.rangeEnd = Array
           }
         }
         this.monthString = this.months[this.month]
@@ -216,8 +156,8 @@
         // 渲染日期
       render (y, m) {
         if (!this.range) {
-          this.rangeBeginC = []
-          this.rangeEndC = []
+          this.rangeBegin = []
+          this.rangeEnd = []
         }
         var firstDayOfMonth = new Date(y, m, 1).getDay()         // 当月第一天
         var lastDateOfMonth = new Date(y, m + 1, 0).getDate()    // 当月最后一天
@@ -250,9 +190,9 @@
             var options = {
               day: i
             }
-            if (this.rangeBeginC.length > 0) {
-              let beginTime = Number(new Date(this.rangeBeginC[0], this.rangeBeginC[1], this.rangeBeginC[2]))
-              let endTime = Number(new Date(this.rangeEndC[0], this.rangeEndC[1], this.rangeEndC[2]))
+            if (this.rangeBegin.length > 0) {
+              let beginTime = Number(new Date(this.rangeBegin[0], this.rangeBegin[1], this.rangeBegin[2]))
+              let endTime = Number(new Date(this.rangeEnd[0], this.rangeEnd[1], this.rangeEnd[2]))
               var thisTime = Number(new Date(this.year, this.month, i))
               if (beginTime <= thisTime && endTime >= thisTime) {
                 options.selected = true
@@ -356,18 +296,18 @@
         if (e !== undefined) e.stopPropagation()
                 // 日期范围
         if (this.range) {
-          if (this.rangeBeginC.length === 0 || this.rangeEndTemp !== 0) {
-            this.rangeBeginC = [this.year, this.month, this.days[k1][k2].day, this.hour, this.minute, this.second]
-            this.rangeBeginTemp = this.rangeBeginC
-            this.rangeEndC = [this.year, this.month, this.days[k1][k2].day, this.hour, this.minute, this.second]
+          if (this.rangeBegin.length === 0 || this.rangeEndTemp !== 0) {
+            this.rangeBegin = [this.year, this.month, this.days[k1][k2].day, this.hour, this.minute, this.second]
+            this.rangeBeginTemp = this.rangeBegin
+            this.rangeEnd = [this.year, this.month, this.days[k1][k2].day, this.hour, this.minute, this.second]
             this.rangeEndTemp = 0
           } else {
-            this.rangeEndC = [this.year, this.month, this.days[k1][k2].day, this.hour, this.minute, this.second]
+            this.rangeEnd = [this.year, this.month, this.days[k1][k2].day, this.hour, this.minute, this.second]
             this.rangeEndTemp = 1
             // 判断结束日期小于开始日期则自动颠倒过来
-            if (+new Date(this.rangeEndC[0], this.rangeEndC[1], this.rangeEndC[2]) < +new Date(this.rangeBeginC[0], this.rangeBeginC[1], this.rangeBeginC[2])) {
-              this.rangeBeginC = this.rangeEndC
-              this.rangeEndC = this.rangeBeginTemp
+            if (+new Date(this.rangeEnd[0], this.rangeEnd[1], this.rangeEnd[2]) < +new Date(this.rangeBegin[0], this.rangeBegin[1], this.rangeBegin[2])) {
+              this.rangeBegin = this.rangeEnd
+              this.rangeEnd = this.rangeBeginTemp
             }
           }
           this.render(this.year, this.month)
@@ -401,7 +341,7 @@
           if (!isSelected) return false
         }
         if (this.range) {
-          this.value = this.output(this.rangeBeginC) + ' ~ ' + this.output(this.rangeEndC)
+          this.value = this.output(this.rangeBegin) + ' ~ ' + this.output(this.rangeEnd)
         } else {
           this.value = this.output([
             this.year,
@@ -432,169 +372,3 @@
       }
     }
   }
-</script>
-<style scoped>
-.calendar {
-    width: 300px;
-    padding: 10px;
-    background: #fff;
-    position: absolute;
-    border: 1px solid #DEDEDE;
-    border-radius: 2px;
-    opacity:.95;
-    transition: all .5s ease;
-}
-.calendar-enter, .calendar-leave {
-    opacity: 0;
-    transform: translate3d(0,-10px, 0);
-}
-.calendar:before {
-    position: absolute;
-    left:30px;
-    top: -10px;
-    content: "";
-    border:5px solid rgba(0, 0, 0, 0);
-    border-bottom-color: #DEDEDE;
-}
-.calendar:after {
-    position: absolute;
-    left:30px;
-    top: -9px;
-    content: "";
-    border:5px solid rgba(0, 0, 0, 0);
-    border-bottom-color: #fff;
-}
-
-.calendar-tools{
-    height:32px;
-    font-size: 20px;
-    line-height: 32px;
-    color:#5e7a88;
-}
-.calendar-tools .float.left{
-    float:left;
-}
-.calendar-tools .float.right{
-    float:right;
-}
-.calendar-tools input{
-    font-size: 20px;
-    line-height: 32px;
-    color: #5e7a88;
-    width: 70px;
-    text-align: center;
-    border:none;
-    background-color: transparent;
-}
-.calendar-tools span{
-    cursor: pointer;
-}
-.calendar-prev{
-    float:left;
-}
-.calendar-next{
-    float:right;
-}
- 
-
-.calendar table {
-    clear: both;
-    width: 100%;
-    margin-bottom:10px;
-    border-collapse: collapse;
-    color: #444444;
-}
-.calendar td {
-    margin:2px !important;
-    padding:0px 0;
-    width: 14.28571429%;
-    height:34px;
-    text-align: center;
-    vertical-align: middle;
-    font-size:14px;
-    line-height: 125%;
-    cursor: pointer;
-}
-
-.calendar td.week{
-    pointer-events:none !important;
-    cursor: default !important;    
-}
-.calendar td.disabled {
-    color: #c0c0c0;
-    pointer-events:none !important;
-    cursor: default !important;
-}
-.calendar td span{
-    display:block;
-    height:30px;
-    line-height:30px;
-    margin:2px;
-    border-radius:2px;
-}
-.calendar td span:hover{
-    background:#f3f8fa;
-}
-.calendar td.selected span{
-    background-color: #5e7a88;
-    color: #fff;
-}
-.calendar td.selected span:hover{
-    background-color: #5e7a88;
-    color: #fff;
-}
-
-.calendar thead td {
-  text-transform: uppercase;
-}
-.calendar .timer{
-    margin:10px 0;
-    text-align: center;
-}
-.calendar .timer input{
-    border-radius: 2px;
-    padding:5px;
-    font-size: 14px;
-    line-height: 18px;
-    color: #5e7a88;
-    width: 50px;
-    text-align: center;
-    border:1px solid #efefef;
-}
-.calendar .timer input:focus{
-    border:1px solid #5e7a88;
-}
-.calendar-button{
-    text-align: center;
-}
-
-.calendar-button span{
-    cursor: pointer;
-    display: inline-block;
-    min-height: 1em;
-    min-width: 5em;
-    vertical-align: baseline;
-    background:#5e7a88;
-    color:#fff;
-    margin: 0 .25em 0 0;
-    padding: .6em 2em;
-    font-size: 1em;
-    line-height: 1em;
-    text-align: center;
-    border-radius: .3em;
-}
-.calendar-button span.cancel{
-    background:#efefef;
-    color:#666;
-}
-
-.calendar .lunar{
-     font-size:11px;
-     line-height: 150%;
-     color:#aaa;   
-}
-.calendar td.selected .lunar{
-     color:#fff;   
-}
-</style>
-

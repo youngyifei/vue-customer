@@ -6,23 +6,28 @@
         <mt-cell :title="'公司处理事务'">
           <mt-switch v-model="isCompanyTransaction" ></mt-switch>
         </mt-cell>
+        <a class="mint-cell" v-show="isCompanyTransaction" >
+          <div class="mint-cell-wrapper">
+            <textarea label="公司处理事务" placeholder="公司处理事务" v-model="companyTransaction" rows="2"></textarea>
+          </div>
+        </a>
         <mt-cell :title="'拜访客户'">
           <mt-switch v-model="isVisitCustomer"></mt-switch>
         </mt-cell>
         <mt-cell :title="'其它'">
           <mt-switch v-model="isOther"></mt-switch>
        </mt-cell>
-       <div v-show="isOther||isCompanyTransaction||isVisitCustomer" class="oneday-value"  >
-          <div v-show="isCompanyTransaction">
-            <mt-field label="公司处理事务" placeholder="公司处理事务" type="textarea" rows="3"></mt-field>
+       <a class="mint-cell" v-show="isOther" >
+          <div class="mint-cell-wrapper">
+            <textarea label="其它" placeholder="其它" v-model="other" rows="2"></textarea>
           </div>
+        </a>
+       <div v-show="isVisitCustomer" class="oneday-value"  >
           <div v-show="isVisitCustomer">
             拜访客户
           </div>
-          <div v-show="isOther">
-            <mt-field label="其它" placeholder="其它" type="textarea" rows="4"></mt-field>
-          </div>
-        </div>
+       </div>
+       <p v-show="false">{{WorkContent}}</p>
       </div>
     </transition>
   </div>
@@ -32,16 +37,37 @@
   export default {
     name: 'OneDay',
     props: ['dateStr', 'colorIndex'],
+    computed: {
+      WorkContent () {
+        let type = []
+        if (this.isCompanyTransaction) {
+          type.push(1)
+        }
+        if (this.isVisitCustomer) {
+          type.push(2)
+        }
+        if (this.isOther) {
+          type.push(3)
+        }
+        let OneDayContent = {
+          WeeklyId: '',
+          Date: this.dateStr,
+          WorkType: type.toString(),
+          WorkContent: this.companyTransaction,
+          Other: this.other
+        }
+        this.$emit('change', this.colorIndex, OneDayContent)
+        return OneDayContent
+      }
+    },
     data () {
       return {
         isCompanyTransaction: false,
         isVisitCustomer: false,
         isOther: false,
-        dayValue: {
-          companyTransaction: '',
-          other: ''
-        },
-        tColor: ['#26c6da', '#42a5f5', '#f06292', '#ba68c8', '#9575cd'],
+        companyTransaction: '',
+        other: '',
+        tColor: ['#D9D6CF', '#D5D9BA', '#D9D6CF', '#D5D9BA', '#D9D6CF'],
         show: true,
         tShow: true
       }
@@ -66,6 +92,13 @@
 </script>
 
 <style scoped>
+  textarea{
+    border: 0px;
+    width: 100%;
+    min-height: 40px;
+    font-size: inherit;
+    margin-top: 5px;
+  }
 	.fade-enter-active, .fade-leave-active {
   		transition: opacity .5s
 	}
@@ -93,6 +126,6 @@
 	.oneday-value{
 		margin: 5px 5px;
 		padding: 5px;
-		-webkit-box-shadow: 0 1px 4px rgb(59,59,59);
+		-webkit-box-shadow: 0 1px 4px rgb(173,173,173);
 	}
 </style>

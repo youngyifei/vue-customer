@@ -36,25 +36,45 @@
 <script>
   export default {
     name: 'OneDay',
-    props: ['dateStr', 'colorIndex'],
+    props: {
+      dateStr: String,
+      colorIndex: Number,
+      propOneDay: {
+        type: Object,
+        default: function () {
+          return {
+            WeeklyId: '',
+            Date: '',
+            WorkType: '',
+            WorkContent: '',
+            Other: ''
+          }
+        }
+      },
+      pOther: {}
+    },
     computed: {
       WorkContent () {
         let type = []
+        let workStr = ''
+        let otherStr = ''
         if (this.isCompanyTransaction) {
           type.push(1)
+          workStr = this.companyTransaction
         }
         if (this.isVisitCustomer) {
           type.push(2)
         }
         if (this.isOther) {
           type.push(3)
+          otherStr = this.other
         }
         let OneDayContent = {
           WeeklyId: '',
           Date: this.dateStr,
           WorkType: type.toString(),
-          WorkContent: this.companyTransaction,
-          Other: this.other
+          WorkContent: workStr,
+          Other: otherStr
         }
         this.$emit('change', this.colorIndex, OneDayContent)
         return OneDayContent
@@ -62,11 +82,11 @@
     },
     data () {
       return {
-        isCompanyTransaction: false,
-        isVisitCustomer: false,
-        isOther: false,
-        companyTransaction: '',
-        other: '',
+        isCompanyTransaction: this.propOneDay.WorkType.indexOf('1') > -1,
+        isVisitCustomer: this.propOneDay.WorkType.indexOf('2') > -1,
+        isOther: this.propOneDay.WorkType.indexOf('3') > -1,
+        companyTransaction: this.propOneDay.WorkContent,
+        other: this.propOneDay.Other,
         tColor: ['#D9D6CF', '#D5D9BA', '#D9D6CF', '#D5D9BA', '#D9D6CF'],
         show: true,
         tShow: true

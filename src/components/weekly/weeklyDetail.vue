@@ -1,7 +1,9 @@
 <template>
   <div>
-    <a>2016年12月第1周周报</a><span>{{$route.params.id}}</span>
-    <OneDay v-for="(item, index) in dateItem" :dateStr="item" :colorIndex="index" :propOneDay="weeklyContent[index]" @change="weeklyContentE" ></OneDay>
+    <div class="weeklt-title"><a>2016年12月第1周周报</a><span>{{$route.params.id}}</span>
+      <mt-switch v-model="editOrNot"><span style="font-size:16px;" >{{editOrNotMsg}}</span></mt-switch>
+    </div>
+    <OneDay v-for="(item, index) in dateItem" :edit="editOrNot" :dateStr="item" :colorIndex="index" :propOneDay="weeklyContent[index]" @change="weeklyContentE" ></OneDay>
     <mt-button type="primary" size="large">保存周报</mt-button>
 </div>
 </template>
@@ -14,11 +16,17 @@
       OneDay,
       Calendar
     },
+    computed: {
+      editOrNotMsg () {
+        return this.editOrNot ? '编辑' : '查看'
+      }
+    },
     data () {
       return {
         dateItem: ['2016-12-05', '2016-12-06', '2016-12-07', '2016-12-08', '2016-12-09'],
         weeklyContent: [],
-        Summary: ''
+        Summary: '',
+        editOrNot: true
       }
     },
     methods: {
@@ -29,3 +37,11 @@
     }
   }
 </script>
+<style scoped>
+  .weeklt-title{
+    font-size: 18px;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+  }
+</style>

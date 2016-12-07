@@ -1,44 +1,65 @@
 <template>
   <div class="oneday">
-    <div class="oneday-title" :style="{ 'background-color': tColor[colorIndex]}" :class="{ 'show': tShow , 'only-title': !tShow }" @click="toggle">{{dateStr}}</div>
-    <transition name="fade">
-  	  <div class="oneday-body" v-show="show"  :style="{ 'border-color': tColor[colorIndex]}" >
-        <mt-cell :title="'公司处理事务'">
-          <mt-switch v-model="isCompanyTransaction" ></mt-switch>
-        </mt-cell>
-        <a class="mint-cell" v-show="isCompanyTransaction" >
-          <div class="mint-cell-wrapper">
-            <textarea label="公司处理事务" placeholder="公司处理事务" v-model="companyTransaction" rows="2"></textarea>
+    <div v-if="edit">
+      <div class="oneday-title" :style="{ 'background-color': tColor[colorIndex]}" :class="{ 'show': tShow , 'only-title': !tShow }" @click="toggle">{{dateStr}}</div>
+      <transition name="fade">
+        <div class="oneday-body" v-show="show"  :style="{ 'border-color': tColor[colorIndex]}" >
+          <mt-cell :title="'公司处理事务'">
+            <mt-switch v-model="isCompanyTransaction" ></mt-switch>
+          </mt-cell>
+          <a class="mint-cell" v-show="isCompanyTransaction" >
+            <div class="mint-cell-wrapper">
+              <textarea label="公司处理事务" placeholder="公司处理事务" v-model="companyTransaction" rows="2"></textarea>
+            </div>
+          </a>
+          <mt-cell :title="'拜访客户'">
+            <mt-switch v-model="isVisitCustomer"></mt-switch>
+          </mt-cell>
+          <mt-cell :title="'其它'">
+            <mt-switch v-model="isOther"></mt-switch>
+          </mt-cell>
+          <a class="mint-cell" v-show="isOther" >
+            <div class="mint-cell-wrapper">
+              <textarea label="其它" placeholder="其它" v-model="other" rows="2"></textarea>
+            </div>
+          </a>
+          <div v-show="isVisitCustomer" class="oneday-value"  >
+            <div v-show="isVisitCustomer">
+              拜访客户
+            </div>
           </div>
-        </a>
-        <mt-cell :title="'拜访客户'">
-          <mt-switch v-model="isVisitCustomer"></mt-switch>
-        </mt-cell>
-        <mt-cell :title="'其它'">
-          <mt-switch v-model="isOther"></mt-switch>
-       </mt-cell>
-       <a class="mint-cell" v-show="isOther" >
-          <div class="mint-cell-wrapper">
-            <textarea label="其它" placeholder="其它" v-model="other" rows="2"></textarea>
-          </div>
-        </a>
-       <div v-show="isVisitCustomer" class="oneday-value"  >
-          <div v-show="isVisitCustomer">
-            拜访客户
-          </div>
-       </div>
-       <p v-show="false">{{WorkContent}}</p>
+          <p v-show="false">{{WorkContent}}</p>
+        </div>
+      </transition>
+    </div>
+    <Paper v-else :title="dateStr" :hasTool="true">
+      <div v-show="isCompanyTransaction">
+        <label>公司处理事务：</label>
+        <p class="text">{{companyTransaction}}</p>
       </div>
-    </transition>
+      <div v-show="isOther">
+        <label>其它：</label>
+        <p class="text">{{other}}</p>
+      </div>
+      <div v-show="isVisitCustomer">拜访</div>
+    </Paper>
   </div>
 </template>
 
 <script>
+  import Paper from '../paper/paper'
   export default {
     name: 'OneDay',
+    components: {
+      Paper
+    },
     props: {
       dateStr: String,
       colorIndex: Number,
+      edit: {
+        type: Boolean,
+        default: true
+      },
       propOneDay: {
         type: Object,
         default: function () {
@@ -148,4 +169,7 @@
 		padding: 5px;
 		-webkit-box-shadow: 0 1px 4px rgb(173,173,173);
 	}
+  p.text{
+    background-color: #f9f9f9
+  }
 </style>

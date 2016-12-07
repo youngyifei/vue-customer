@@ -35,11 +35,11 @@
     <Paper v-else :title="dateStr" :hasTool="true">
       <div v-show="isCompanyTransaction">
         <label>公司处理事务：</label>
-        <p class="text">{{companyTransaction}}</p>
+        <pre class="text">{{companyTransaction}}</pre>
       </div>
       <div v-show="isOther">
         <label>其它：</label>
-        <p class="text">{{other}}</p>
+        <pre class="text">{{other}}</pre>
       </div>
       <div v-show="isVisitCustomer">拜访</div>
     </Paper>
@@ -169,7 +169,9 @@
 		padding: 5px;
 		-webkit-box-shadow: 0 1px 4px rgb(173,173,173);
 	}
-  p.text{
-    background-color: #f9f9f9
+  pre.text{
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 2px 2px 2px 6px;
   }
 </style>

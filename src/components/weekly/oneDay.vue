@@ -163,6 +163,7 @@
 	.oneday-title{
 		background-color: #d0cfcf;
 		padding: 10px 10px;
+    margin-top: 12px;
 	}
 	.oneday-value{
 		margin: 5px 5px;
@@ -173,5 +174,10 @@
     background-color: #f9f9f9;
     border-radius: 5px;
     padding: 2px 2px 2px 6px;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
   }
 </style>

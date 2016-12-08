@@ -130,10 +130,14 @@
     },
     computed: {
       rangeBeginC: function () {
-        return this.rangeBegin
+        let str = JSON.stringify(this.rangeBegin)
+        let newobj = JSON.parse(str)
+        return newobj
       },
       rangeEndC: function () {
-        return this.rangeEnd
+        let str = JSON.stringify(this.rangeEnd)
+        let newobj = JSON.parse(str)
+        return newobj
       }
     }
     created () {

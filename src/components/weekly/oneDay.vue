@@ -33,14 +33,8 @@
       </transition>
     </div>
     <Paper v-else :title="dateStr" :hasTool="true">
-      <div v-show="isCompanyTransaction">
-        <label>公司处理事务：</label>
-        <pre class="text">{{companyTransaction}}</pre>
-      </div>
-      <div v-show="isOther">
-        <label>其它：</label>
-        <pre class="text">{{other}}</pre>
-      </div>
+      <wu-text v-show="isCompanyTransaction" :title="'公司处理事务：'" :value="companyTransaction" :pre="true"></wu-text>
+      <wu-text v-show="isOther" :title="'其它：'" :value="other" :pre="true"></wu-text>
       <div v-show="isVisitCustomer">拜访</div>
     </Paper>
   </div>
@@ -48,9 +42,11 @@
 
 <script>
   import Paper from '../paper/paper'
+  import WuText from '../paper/text'
   export default {
     name: 'OneDay',
     components: {
+      'wu-text': WuText,
       Paper
     },
     props: {
@@ -97,7 +93,7 @@
           WorkContent: workStr,
           Other: otherStr
         }
-        this.$emit('change', this.colorIndex, OneDayContent)
+        this.change(OneDayContent)
         return OneDayContent
       }
     },
@@ -116,6 +112,12 @@
     methods: {
       toggle () {
         this.show = !this.show
+      },
+      change (data) {
+        this.$emit('change', this.colorIndex, data)
+      },
+      dataChange () {
+        this.$emit('dataChange')
       }
     },
     watch: {
@@ -127,6 +129,16 @@
         } else {
           this.tShow = this.show
         }
+      },
+      WorkContent () {
+        this.dataChange()
+      },
+      propOneDay () {
+        this.isCompanyTransaction = this.propOneDay.WorkType.indexOf('1') > -1
+        this.isVisitCustomer = this.propOneDay.WorkType.indexOf('2') > -1
+        this.isOther = this.propOneDay.WorkType.indexOf('3') > -1
+        this.companyTransaction = this.propOneDay.WorkContent
+        this.other = this.propOneDay.Other
       }
     }
   }

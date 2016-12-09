@@ -13,7 +13,8 @@ Vue.prototype.$http = axios
 Vue.mixin({
   data () {
     return {
-      axios: axios
+      axios: axios,
+      wxId: 'oKkfCvsqS0k-H_Nl6DJop6PhTJ3E'
     }
   }
 })

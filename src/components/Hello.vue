@@ -3,7 +3,7 @@
     <h2>周报</h2>
     <ul>
       <li><a href="/#/weekly" >周报查询</a></li>
-      <li><a href="/#/weeklyDetail" >新增周报</a></li>
+      <li><a href="/#/weeklyDetail" >我的周报</a></li>
       <br>
       <br>
       <li><a href="/#/weekly" >编辑本周周报</a></li>

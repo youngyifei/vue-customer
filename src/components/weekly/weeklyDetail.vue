@@ -65,6 +65,7 @@
     data () {
       return {
         dateItem: [],
+        WeeklyId: '',
         WeeklyFee: null, // 截止本周收费
         MonthFee: null, // 预计本月收费
         Summary: '', // 项目汇报/下周工作计划
@@ -95,6 +96,7 @@
         console.log(this.$route.params.id)
       },
       initWeeklyData (data) {
+        this.WeeklyId = data.Weekly.Id
         this.weeklyNameByDate = data.Weekly.Title
         this.Summary = data.Weekly.Summary
         this.Plan = data.Weekly.Plan
@@ -105,11 +107,12 @@
         this.WeekIdentified = data.Weekly.WeekIdentified
         this.weeklyContent = data.WeeklyContent
         if (this.WeekIdentified < this.getWeekIdentified(new Date())) {
+          this.editOrNot = false
+          this.canEdit = false
         } else {
           this.editOrNot = true
           this.canEdit = true
         }
-        setTimeout(() => { this.hasEdit = false }, 200)
       },
       setHasEdit () {
         if (this.canEdit) {
@@ -120,6 +123,7 @@
         let data = {
           WxId: this.wxId,
           Weekly: {
+            Id: this.WeeklyId,
             Title: this.weeklyNameByDate,
             Summary: this.Summary,
             Plan: this.Plan,
@@ -164,6 +168,7 @@
           if (response.data !== '1') {
             this.initWeeklyData(response.data)
           } else {
+            this.WeeklyId = ''
             this.Summary = ''
             this.Plan = ''
             this.WeeklyFee = ''
@@ -171,8 +176,10 @@
             this.weeklyContent = []
             this.editOrNot = true
             this.canEdit = true
+            Toast('您本周还未填写周报，请填写~')
           }
           this.weeklyDate = new Date(this.date)
+          setTimeout(() => { this.hasEdit = false }, 200)
         })
         .catch(function (error) {
           Toast(error)

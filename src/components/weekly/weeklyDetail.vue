@@ -46,7 +46,7 @@
   import Paper from '../paper/paper'
   import WuText from '../paper/text'
   import OneDay from './oneDay'
-  import { MessageBox, Toast } from 'mint-ui'
+  import { MessageBox, Toast, Indicator } from 'mint-ui'
   export default {
     name: 'weekly-detail',
     components: {
@@ -78,7 +78,8 @@
         date: new Date(),
         weeklyDate: new Date(),
         hasEdit: false, // 判断是否编辑过
-        canEdit: true
+        canEdit: true,
+        testSuccess: true
       }
     },
     beforeRouteEnter (to, from, next) {
@@ -135,13 +136,26 @@
           },
           WeeklyContent: this.weeklyContent
         }
+        this.loading('保存中...')
         this.$http.post('/api/WUApi/SaveWeeklyByWxId', data)
-        .then(function (response) {
+        .then(response => {
           console.log(response)
+          this.loaded()
+          this.editOrNot = false
         })
-        .catch(function (error) {
+        .catch(error => {
           console.log(error)
+          this.loaded()
         })
+      },
+      loading (text) {
+        Indicator.open({
+          text: text,
+          spinnerType: 'fading-circle'
+        })
+      },
+      loaded () {
+        Indicator.close()
       },
       openPicker () {
         this.$refs.picker.open()
@@ -163,8 +177,10 @@
         }
       },
       weeklyChange () {
+        this.loading('加载数据中...')
         this.$http.get('/api/WUApi/GetWeeklyByWxIdAndIndent?wxId=' + this.wxId + '&weekIdentified=' + this.getWeekIdentified(this.date))
         .then(response => {
+          this.loaded()
           if (response.data !== '1') {
             this.initWeeklyData(response.data)
           } else {
@@ -182,6 +198,7 @@
           setTimeout(() => { this.hasEdit = false }, 200)
         })
         .catch(function (error) {
+          this.loaded()
           Toast(error)
         })
       },
@@ -237,7 +254,8 @@
         }
         return dt
       },
-      weeklyContentE (index, OneDayContent) { // 数据更新
+      weeklyContentE (index, OneDayContent, oneTestSuccess) { // 数据更新
+        this.testSuccess = oneTestSuccess && this.testSuccess
         this.weeklyContent[index] = OneDayContent
       },
       getMonthAndWeekNo (dateTime) { // 返回属本月第几周

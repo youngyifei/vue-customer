@@ -1,15 +1,15 @@
 <template>
   <div class="oneday">
     <div v-if="edit">
-      <div class="oneday-title" :style="{ 'background-color': tColor[colorIndex]}" :class="{ 'show': tShow , 'only-title': !tShow }" @click="toggle">{{dateStr}}</div>
+      <div class="oneday-title" :style="{ 'background-color': color}" :class="{ 'show': tShow , 'only-title': !tShow }" @click="toggle"><span>{{dateStr}}</span><strong v-show="!TestSuccess" style="color:white">这是必填项</strong></div>
       <transition name="fade">
-        <div class="oneday-body" v-show="show"  :style="{ 'border-color': tColor[colorIndex]}" >
+        <div class="oneday-body" v-show="show"  :style="{ 'border-color': color}" >
           <mt-cell :title="'公司处理事务'">
             <mt-switch v-model="isCompanyTransaction" ></mt-switch>
           </mt-cell>
           <a class="mint-cell" v-show="isCompanyTransaction" >
             <div class="mint-cell-wrapper">
-              <textarea label="公司处理事务" placeholder="公司处理事务" v-model="companyTransaction" rows="2"></textarea>
+              <textarea label="公司处理事务" placeholder="公司处理事务" :class="{ 'error': !CtransactionTest }" v-model="companyTransaction" rows="2"></textarea>
             </div>
           </a>
           <mt-cell :title="'拜访客户'">
@@ -20,7 +20,7 @@
           </mt-cell>
           <a class="mint-cell" v-show="isOther" >
             <div class="mint-cell-wrapper">
-              <textarea label="其它" placeholder="其它" v-model="other" rows="2"></textarea>
+              <textarea label="其它" placeholder="其它" v-model="other" :class="{ 'error': !OtherTest }"  rows="2"></textarea>
             </div>
           </a>
           <div v-show="isVisitCustomer" class="oneday-value"  >
@@ -95,6 +95,43 @@
         }
         this.change(OneDayContent)
         return OneDayContent
+      },
+      NeedTest () { // 是否需要数据验证。如果不是编辑且日期不是当天或以前则不需要
+        let timeArray = this.dateStr.replace(/[ -.:/]/g, '/').split('/')
+        let time = new Date(timeArray[0], timeArray[1] - 1, timeArray[2])
+        return this.edit && (new Date() > time)
+      },
+      CtransactionTest () { // 公司处理事务是否验证正确
+        if (this.NeedTest && this.isCompanyTransaction) {
+          return !(this.companyTransaction.trim().length === 0)
+        } else {
+          return true
+        }
+      },
+      OtherTest () { // 其它是否验证正确
+        if (this.NeedTest && this.isOther) {
+          return !(this.other.trim().length === 0)
+        } else {
+          return true
+        }
+      },
+      TestSuccess () { // 是否验证成功
+        if (this.NeedTest) { // 如果不需要默认成功，若需要则至少选择一项且数据验证成功则成功否则失败
+          if ((this.isCompanyTransaction || this.isVisitCustomer || this.isOther) && this.CtransactionTest && this.OtherTest) {
+            return true
+          } else {
+            return false
+          }
+        } else {
+          return true
+        }
+      },
+      color () {
+        if (this.TestSuccess) {
+          return this.tColor[this.colorIndex]
+        } else {
+          return '#f44336'
+        }
       }
     },
     data () {
@@ -114,7 +151,7 @@
         this.show = !this.show
       },
       change (data) {
-        this.$emit('change', this.colorIndex, data)
+        this.$emit('change', this.colorIndex, data, this.TestSuccess)
       },
       dataChange () {
         this.$emit('dataChange')
@@ -152,6 +189,9 @@
     font-size: inherit;
     margin-top: 5px;
   }
+  textarea.error{
+    border-bottom: 1px solid #f44336;
+  }
 	.fade-enter-active, .fade-leave-active {
   		transition: opacity .5s
 	}
@@ -174,6 +214,8 @@
 	}
 	.oneday-title{
 		background-color: #d0cfcf;
+    justify-content: space-between;
+    display: flex;
 		padding: 10px 10px;
     margin-top: 12px;
 	}

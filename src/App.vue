@@ -105,4 +105,7 @@
   .mint-searchbar input[type=search] {
     width: 100%;
   }
+  .mint-cell.error{
+    border-bottom: 1px solid red;
+  }
 </style>

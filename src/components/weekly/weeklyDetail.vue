@@ -3,7 +3,7 @@
     <div class="weeklt-title"><a  @click='openPicker' >{{weeklyNameByDate}}</a>
       <mt-switch v-model="editOrNot" v-show="canEdit"><span style="font-size:16px;" >{{editOrNotMsg}}</span></mt-switch>
     </div>
-    <OneDay v-for="(item, index) in dateItem" :edit="editOrNot" :dateStr="item" :colorIndex="index" :propOneDay="weeklyContent[index]" @change="weeklyContentE" @dataChange="setHasEdit" ></OneDay>
+    <OneDay v-for="(item, index) in dateItem" :edit="editOrNot" :init="oneDayInit" :dateStr="item" :colorIndex="index" :propOneDay="weeklyContent[index]" @change="weeklyContentE" @dataChange="setHasEdit" ></OneDay>
     <Paper v-if="editOrNot">
       <mt-field label="截止本周收费" v-model="WeeklyFee" placeholder="请输入金额" type="number"></mt-field>
       <mt-field label="预计本月收费" v-model="MonthFee" placeholder="请输入金额" type="number"></mt-field>
@@ -71,6 +71,7 @@
         Summary: '', // 项目汇报/下周工作计划
         Plan: '', // 团队建设计划
         weeklyContent: [],
+        oneDayInit: false, // 单日组件是否已经初始化第一个数据
         WeekIdentified: '',
         Monday: '',
         Sunday: '',
@@ -79,7 +80,8 @@
         weeklyDate: new Date(),
         hasEdit: false, // 判断是否编辑过
         canEdit: true,
-        testSuccess: true
+        testSuccess: [true, true, true, true, true],
+        dataSuccess: false
       }
     },
     beforeRouteEnter (to, from, next) {
@@ -180,7 +182,6 @@
         this.loading('加载数据中...')
         this.$http.get('/api/WUApi/GetWeeklyByWxIdAndIndent?wxId=' + this.wxId + '&weekIdentified=' + this.getWeekIdentified(this.date))
         .then(response => {
-          this.loaded()
           if (response.data !== '1') {
             this.initWeeklyData(response.data)
           } else {
@@ -195,6 +196,8 @@
             Toast('您本周还未填写周报，请填写~')
           }
           this.weeklyDate = new Date(this.date)
+          this.oneDayInit = true
+          this.loaded()
           setTimeout(() => { this.hasEdit = false }, 200)
         })
         .catch(function (error) {
@@ -255,8 +258,13 @@
         return dt
       },
       weeklyContentE (index, OneDayContent, oneTestSuccess) { // 数据更新
-        this.testSuccess = oneTestSuccess && this.testSuccess
+        this.testSuccess[index] = oneTestSuccess
         this.weeklyContent[index] = OneDayContent
+        this.testDaySuccess()
+      },
+      testDaySuccess () {
+        let success = this.testSuccess[0] && this.testSuccess[1] && this.testSuccess[2] && this.testSuccess[3] && this.testSuccess[4]
+        this.dataSuccess = success
       },
       getMonthAndWeekNo (dateTime) { // 返回属本月第几周
         let dt = new Date(dateTime)

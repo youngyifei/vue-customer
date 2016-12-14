@@ -25,7 +25,19 @@
           </a>
           <div v-show="isVisitCustomer" class="oneday-value"  >
             <div v-show="isVisitCustomer">
-              拜访客户
+              <div v-if="visitData.length > 0">
+                <div class="visit" v-for="(li, index) in visitData" :class="{ 'odd': index % 2===1}">
+                  <div class="visit-left">
+                    <span>{{li.CustomerName}}</span><br>
+                    <span>{{li.CompanyName}}</span>
+                  </div>
+                  <div class="visit-right">
+                    <span>{{li.VisitTypeName}}</span><br>
+                    <span>{{li.MethodName}}</span>
+                  </div>
+                </div>
+              </div>
+              <div v-else>{{visitloadText}}</div>
             </div>
           </div>
           <p v-show="false">{{WorkContent}}</p>
@@ -35,7 +47,24 @@
     <Paper v-else :title="dateStr" :hasTool="true">
       <wu-text v-show="isCompanyTransaction" :title="'公司处理事务：'" :value="companyTransaction" :pre="true"></wu-text>
       <wu-text v-show="isOther" :title="'其它：'" :value="other" :pre="true"></wu-text>
-      <div v-show="isVisitCustomer">拜访</div>
+      <div v-show="isVisitCustomer">
+        <label>拜访：</label>
+        <div class="oneday-value" >
+          <div v-if="visitData.length > 0">
+            <div class="visit" v-for="(li, index) in visitData" :class="{ 'odd': index % 2===1}">
+              <div class="visit-left">
+                <span>{{li.CustomerName}}</span><br>
+                <span>{{li.CompanyName}}</span>
+              </div>
+              <div class="visit-right">
+                <span>{{li.VisitTypeName}}</span><br>
+                <span>{{li.MethodName}}</span>
+              </div>
+            </div>
+          </div>
+          <div v-else>{{visitloadText}}</div>
+        </div>
+      </div>
     </Paper>
   </div>
 </template>
@@ -51,6 +80,7 @@
     },
     props: {
       dateStr: String,
+      init: Boolean,
       colorIndex: Number,
       edit: {
         type: Boolean,
@@ -99,6 +129,7 @@
       NeedTest () { // 是否需要数据验证。如果不是编辑且日期不是当天或以前则不需要
         let timeArray = this.dateStr.replace(/[ -.:/]/g, '/').split('/')
         let time = new Date(timeArray[0], timeArray[1] - 1, timeArray[2])
+        time = time.setDate(time.getDate() + 1) // +1是为了排除掉今天
         return this.edit && (new Date() > time)
       },
       CtransactionTest () { // 公司处理事务是否验证正确
@@ -142,6 +173,9 @@
         companyTransaction: this.propOneDay.WorkContent,
         other: this.propOneDay.Other,
         tColor: ['#D9D6CF', '#D5D9BA', '#D9D6CF', '#D5D9BA', '#D9D6CF'],
+        visitData: [],
+        visitloadText: '加载中...',
+        hasLoadVisit: false,
         show: true,
         tShow: true
       }
@@ -155,6 +189,37 @@
       },
       dataChange () {
         this.$emit('dataChange')
+      },
+      toLoadVisitData () {
+        if (this.isVisitCustomer && !this.hasLoadVisit) {
+          this.hasLoadVisit = true
+          this.$http.get('/api/WUApi/GetWeeklyVisitList?wxId=' + this.wxId + '&Date=' + this.dateStr)
+          .then(response => {
+            if (response.status === 200) {
+              this.visitData = response.data
+              if (this.visitData.length === 0) {
+                this.visitloadText = '本日无拜访'
+              }
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        }
+      },
+      propChangeData () {
+        this.isCompanyTransaction = this.propOneDay.WorkType.indexOf('1') > -1
+        this.isVisitCustomer = this.propOneDay.WorkType.indexOf('2') > -1
+        this.isOther = this.propOneDay.WorkType.indexOf('3') > -1
+        this.companyTransaction = this.propOneDay.WorkContent
+        this.other = this.propOneDay.Other
+        this.visitData = []
+        this.hasLoadVisit = false
+        this.visitloadText = '加载中...'
+        if (this.NeedTest && this.TestSuccess && this.edit) {
+          this.show = false
+        }
+        this.toLoadVisitData()
       }
     },
     watch: {
@@ -170,18 +235,45 @@
       WorkContent () {
         this.dataChange()
       },
-      propOneDay () {
-        this.isCompanyTransaction = this.propOneDay.WorkType.indexOf('1') > -1
-        this.isVisitCustomer = this.propOneDay.WorkType.indexOf('2') > -1
-        this.isOther = this.propOneDay.WorkType.indexOf('3') > -1
-        this.companyTransaction = this.propOneDay.WorkContent
-        this.other = this.propOneDay.Other
+      init () { // 首次加载数据初始化。对拜访信息进行加载
+        this.propChangeData()
+      },
+      dateStr () {
+        this.propChangeData()
+      },
+      isVisitCustomer () {
+        this.toLoadVisitData()
+      },
+      colorIndex () {
+        console.log(1)
       }
     }
   }
 </script>
 
 <style scoped>
+  div.visit{
+    justify-content: space-between;
+    display: flex;
+  }
+  div.visit-left{
+    max-width:60%;
+  }
+  div.visit-right{
+    max-width:40%;
+  }
+  div.visit.odd{
+    background-color: #D9D6CF;
+    margin:5px 0px;
+    padding: 5px 3px
+  }
+  div.visit span{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100%;
+    display: inline-block;
+  }
   textarea{
     border: 0px;
     width: 100%;

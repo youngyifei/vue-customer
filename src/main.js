@@ -10,16 +10,53 @@ Vue.use(MintUI)
 axios.defaults.baseURL = 'http://127.0.0.1:8081'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 Vue.prototype.$http = axios
-Vue.mixin({
-  data () {
-    return {
-      axios: axios,
-      wxId: 'oKkfCvsqS0k-H_Nl6DJop6PhTJ3E'
+/* eslint-disable no-new */
+MintUI.Indicator.open({
+  text: '正在初始化数据...',
+  spinnerType: 'fading-circle'
+})
+function start () {
+  function getQueryString (name) {
+    let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+    let r = window.location.search.substr(1).match(reg)
+    if (r != null) {
+      return decodeURI(r[2])
+    } else {
+      return null
     }
   }
-})
-/* eslint-disable no-new */
-new Vue({
-  router,
-  ...App
-}).$mount('#app')
+  function errorTodo () {
+    MintUI.Indicator.close()
+    MintUI.MessageBox.confirm('加载失败，是否重新加载').then(action => {
+      start()
+    })
+  }
+  let wxid = getQueryString('wxid')
+  axios.get('/api/WUApi/GetUserInfoByWxId?wxId=' + wxid)
+  .then(response => {
+    console.log(response)
+    if (response.status === 200) {
+      let roleId = response.data.RoleName
+      MintUI.Indicator.close()
+      Vue.mixin({
+        data () {
+          return {
+            axios: axios,
+            wxId: wxid,
+            roleId: roleId
+          }
+        }
+      })
+      new Vue({
+        router,
+        ...App
+      }).$mount('#app')
+    } else {
+      errorTodo()
+    }
+  })
+  .catch(response => {
+    errorTodo()
+  })
+}
+start()

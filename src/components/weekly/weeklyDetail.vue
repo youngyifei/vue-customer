@@ -5,21 +5,21 @@
     </div>
     <OneDay v-for="(item, index) in dateItem" :edit="editOrNot" :init="oneDayInit" :dateStr="item" :colorIndex="index" :propOneDay="weeklyContent[index]" @change="weeklyContentE" @dataChange="setHasEdit" ></OneDay>
     <Paper v-if="editOrNot">
-      <mt-field label="截止本周收费" v-model="WeeklyFee" placeholder="请输入金额" type="number"></mt-field>
-      <mt-field label="预计本月收费" v-model="MonthFee" placeholder="请输入金额" type="number"></mt-field>
+      <mt-field label="截止本周收费" v-model="WeeklyFee"  :class="{ 'error': !weeklyFeeTest }"  placeholder="请输入金额" type="number"></mt-field>
+      <mt-field label="预计本月收费" v-model="MonthFee"  :class="{ 'error': !monthFeeTest }"  placeholder="请输入金额" type="number"></mt-field>
       <mt-cell :title="'项目汇报/下周工作计划：'">
       </mt-cell>
-      <a class="mint-cell">
+      <a class="mint-cell"  :class="{ 'error': !summaryTest }" >
         <div class="mint-cell-wrapper">
           <textarea label="项目汇报/下周工作计划" placeholder="项目汇报/下周工作计划" v-model="Summary" rows="5"></textarea>
         </div>
       </a>
-      <div>
+      <div v-if="isBoss">
         <mt-cell :title="'团队建设计划：'">
         </mt-cell>
         <a class="mint-cell">
           <div class="mint-cell-wrapper">
-            <textarea label="团队建设计划" placeholder="团队建设计划" v-model="Plan" rows="5"></textarea>
+            <textarea label="团队建设计划" placeholder="团队建设计划" :class="{ 'error': !planTest }" v-model="Plan" rows="5"></textarea>
           </div>
         </a>
       </div>
@@ -28,7 +28,7 @@
       <wu-text :title="'截止本周收费:'" :value="WeeklyFee"></wu-text>
       <wu-text :title="'预计本月收费:'" :value="MonthFee"></wu-text>
       <wu-text :title="'项目汇报/下周工作计划:'" :value="Summary" :pre="true"></wu-text>
-      <wu-text :title="'团队建设计划:'" :value="Plan" :pre="true"></wu-text>
+      <wu-text  v-if="isBoss" :title="'团队建设计划:'" :value="Plan" :pre="true"></wu-text>
     </Paper>
     <mt-button type="primary"  v-show="canEdit" size="large" @click="saveWeekly">保存周报</mt-button>
     <mt-datetime-picker
@@ -38,7 +38,7 @@
     year-format="{value} 年"
     month-format="{value} 月"
     date-format="{value} 日"
-    @confirm="handleConfirm">sss
+    @confirm="handleConfirm">
     </mt-datetime-picker>
 </div>
 </template>
@@ -60,14 +60,32 @@
       },
       weeklyNameByDate () {
         return this.getWeekCountByDate()
+      },
+      isBoss () {
+        return this.roleId === '1'
+      },
+      needTest () {
+        return true // new Date() > this.strToDate(this.dateItem[4]) && this.canEdit
+      },
+      weeklyFeeTest () {
+        return !this.needTest || (this.needTest && this.WeeklyFee !== '')
+      },
+      monthFeeTest () {
+        return !this.needTest || (this.needTest && this.MonthFee !== '')
+      },
+      summaryTest () {
+        return !this.needTest || (this.needTest && this.Summary.length > 0)
+      },
+      planTest () {
+        return !this.isBoss || !this.needTest || (this.needTest && this.Plan.length > 0)
       }
     },
     data () {
       return {
         dateItem: [],
         WeeklyId: '',
-        WeeklyFee: null, // 截止本周收费
-        MonthFee: null, // 预计本月收费
+        WeeklyFee: '', // 截止本周收费
+        MonthFee: '', // 预计本月收费
         Summary: '', // 项目汇报/下周工作计划
         Plan: '', // 团队建设计划
         weeklyContent: [],
@@ -123,6 +141,11 @@
         }
       },
       saveWeekly () { // 保存周报
+        if (!this.dataSuccess) {
+          Toast('请确保红色必填部分全部填充完成~')
+          this.editOrNot = true
+          return
+        }
         let data = {
           WxId: this.wxId,
           Weekly: {
@@ -143,7 +166,14 @@
         .then(response => {
           console.log(response)
           this.loaded()
+          let lastTime = this.strToDate(this.dateItem[4])
+          let now = new Date()
+          now.setDate(now.getDate() - now.getDay())
           this.editOrNot = false
+          if (lastTime < now) {
+            this.canEdit = false
+          }
+          this.hasEdit = false
         })
         .catch(error => {
           console.log(error)
@@ -250,6 +280,11 @@
         let day = dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate()
         return dt.getFullYear() + '-' + (dt.getMonth() - 0 + 1) + '-' + day
       },
+      strToDate (str) {
+        let timeArray = str.replace(/[ -.:/]/g, '/').split('/')
+        let time = new Date(timeArray[0], timeArray[1] - 1, timeArray[2])
+        return time
+      },
       getTrueDate (date) { // 把周日变成周六
         let dt = new Date(date)
         if (dt.getDay() === 0) {
@@ -263,7 +298,7 @@
         this.testDaySuccess()
       },
       testDaySuccess () {
-        let success = this.testSuccess[0] && this.testSuccess[1] && this.testSuccess[2] && this.testSuccess[3] && this.testSuccess[4]
+        let success = this.testSuccess[0] && this.testSuccess[1] && this.testSuccess[2] && this.testSuccess[3] && this.testSuccess[4] && this.weeklyFeeTest && this.monthFeeTest && this.planTest && this.summaryTest
         this.dataSuccess = success
       },
       getMonthAndWeekNo (dateTime) { // 返回属本月第几周
@@ -283,6 +318,9 @@
   }
 </script>
 <style scoped>
+  textarea.error{
+    border-bottom: 1px solid #f44336;
+  }
   textarea{
     border: 0px;
     width: 100%;

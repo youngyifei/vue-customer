@@ -2,23 +2,23 @@
   <div class="hello">
     <h2>周报</h2>
     <ul>
-      <li><a href="/#/weekly" >周报查询</a></li>
-      <li><a href="/#/weeklyDetail" >我的周报</a></li>
+      <li><a href="#/weekly" >周报查询</a></li>
+      <li><a href="#/weeklyDetail" >我的周报</a></li>
       <br>
       <br>
-      <li><a href="/#/weekly" >编辑本周周报</a></li>
+      <li><a href="#/weekly" >编辑本周周报</a></li>
     </ul>
     <h2>客户</h2>
     <ul>
-      <li><a href="/#/weekly" >客户查询</a></li>
-      <li><a href="/#/weekly" >新增客户</a></li>
-      <li><a href="/#/weekly" >客户编辑</a></li>
+      <li><a href="#/weekly" >客户查询</a></li>
+      <li><a href="#/weekly" >新增客户</a></li>
+      <li><a href="#/weekly" >客户编辑</a></li>
     </ul>
     <h2>报单</h2>
     <ul>
-      <li><a href="/#/weekly" >报单查询</a></li>
-      <li><a href="/#/weekly" >新增报单</a></li>
-      <li><a href="/#/weekly" >报单编辑</a></li>
+      <li><a href="#/weekly" >报单查询</a></li>
+      <li><a href="#/weekly" >新增报单</a></li>
+      <li><a href="#/weekly" >报单编辑</a></li>
     </ul>
   </div>
 </template>

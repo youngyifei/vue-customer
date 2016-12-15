@@ -151,6 +151,7 @@
           if ((this.isCompanyTransaction || this.isVisitCustomer || this.isOther) && this.CtransactionTest && this.OtherTest) {
             return true
           } else {
+            this.show = true
             return false
           }
         } else {

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="app-bar" style="z-index:20;">
-      <mt-header title="大客户系统" style="height:50px;">
+      <mt-header :title="appTitle" style="height:50px;">
         <mt-button icon="more" slot="right" @click="popupTaggle" >菜单</mt-button>
         <router-link to="/" slot="left">
           <mt-button icon="back" >返回</mt-button>
@@ -18,10 +18,11 @@
             </div>
           </div>
           <div>
-            <mt-cell title="我的报单" :to="'/'" is-link></mt-cell>
-            <mt-cell title="我的客户" :to="'/'" is-link></mt-cell>
-            <mt-cell title="我的周报" :to="'/weekly'" is-link></mt-cell>
-            <mt-cell title="我的信息" :to="'/'"  is-link></mt-cell>
+            <mt-cell title="我的周报" :to="'/weeklyDetail'" is-link></mt-cell>
+            <mt-cell title="周报查询" :to="'/weekly'" is-link></mt-cell>
+            <mt-cell title="我的报单" :href="'DclarationManage?wxid='+ wxId" is-link></mt-cell>
+            <mt-cell title="我的客户" :href="'CustomerManage?wxid='+ wxId" is-link></mt-cell>
+            <mt-cell title="我的数据" :href="'WXDataStatistics?wxid='+ wxId"  is-link></mt-cell>
           </div>
         </div>
       </mt-popup>

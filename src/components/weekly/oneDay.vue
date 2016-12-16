@@ -86,6 +86,7 @@
         type: Boolean,
         default: true
       },
+      dayUserId: String,
       propOneDay: {
         type: Object,
         default: function () {
@@ -194,7 +195,7 @@
       toLoadVisitData () {
         if (this.isVisitCustomer && !this.hasLoadVisit) {
           this.hasLoadVisit = true
-          this.$http.get('/api/WUApi/GetWeeklyVisitList?wxId=' + this.wxId + '&Date=' + this.dateStr)
+          this.$http.get('/api/WUApi/GetWeeklyVisitList?userId=' + this.dayUserId + '&Date=' + this.dateStr)
           .then(response => {
             if (response.status === 200) {
               this.visitData = response.data

@@ -1,7 +1,7 @@
 <template>
   <div class="background">
     <Search @change="show">
-        <mt-cell v-for="item in result" :title="item.title" :label="item.label" :to="'/weeklyDetail/'+item.id" is-link></mt-cell>
+        <mt-cell v-for="item in filterResult" :title="item.UserName" :label="item.DeparmentName" :to="'/weeklyDetail/'+item.UserId" is-link></mt-cell>
     </Search>
   </div>
 </template>
@@ -13,22 +13,39 @@
     components: {
       Search
     },
+    computed: {
+      filterResult () {
+        let list = this.result.filter(this.userNameFilter)
+        if (list.length === 0) {
+          list = this.result
+        }
+        return list
+      }
+    },
     data () {
       return {
         value: '',
-        result: [
-          {title: '2016年11月第1周周报', label: '个人啊实打实大师打算打算大叔大婶打算', id: '1'},
-          {title: '2016年11月第1周周报', label: '个人', id: '2'},
-          {title: '2016年11月第1周周报', label: '个人', id: '3'},
-          {title: '2016年11月第1周周报', label: '个人', id: '4'},
-          {title: '2016年11月第1周周报', label: '个人', id: '5'}
-        ]
+        hasLoad: false,
+        result: []
       }
     },
     methods: {
+      userNameFilter (value) {
+        return value !== undefined && value.UserName.indexOf(this.value) > -1
+      },
       show (value) {
         this.value = value
-        console.log(this.value)
+        if (!this.hasLoad) {
+          this.hasLoad = true
+          this.$http.get('/api/WUApi/GetUnderlingUser?wxId=' + this.wxId)
+          .then(response => {
+            if (response.status === 200) {
+              this.result = response.data
+            }
+          })
+          .catch(response => {
+          })
+        }
       }
     }
   }

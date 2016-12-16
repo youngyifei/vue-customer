@@ -41,17 +41,20 @@ function start () {
       let workNo = response.data.WorkNo
       let img = response.data.Img
       let deparmentName = response.data.DeparmentName
+      let userId = response.data.userId
       MintUI.Indicator.close()
       Vue.mixin({
         data () {
           return {
+            appTitle: '周报',
             axios: axios,
             wxId: wxid,
             roleId: roleId,
             userName: userName,
             workNo: workNo,
             userImg: img,
-            deparmentName: deparmentName
+            deparmentName: deparmentName,
+            userId: userId
           }
         }
       })

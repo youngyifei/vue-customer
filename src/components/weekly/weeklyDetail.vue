@@ -3,7 +3,7 @@
     <div class="weeklt-title"><a  @click='openPicker' >{{weeklyNameByDate}}</a>
       <mt-switch v-model="editOrNot" v-show="canEdit"><span style="font-size:16px;" >{{editOrNotMsg}}</span></mt-switch>
     </div>
-    <OneDay v-for="(item, index) in dateItem" :edit="editOrNot" :init="oneDayInit" :dateStr="item" :colorIndex="index" :propOneDay="weeklyContent[index]" @change="weeklyContentE" @dataChange="setHasEdit" ></OneDay>
+    <OneDay v-for="(item, index) in dateItem" :edit="editOrNot" :dayUserId="weeklyUserId" :init="oneDayInit" :dateStr="item" :colorIndex="index" :propOneDay="weeklyContent[index]" @change="weeklyContentE" @dataChange="setHasEdit" ></OneDay>
     <Paper v-if="editOrNot">
       <mt-field label="截止本周收费" v-model="WeeklyFee"  :class="{ 'error': !weeklyFeeTest }"  placeholder="请输入金额" type="number"></mt-field>
       <mt-field label="预计本月收费" v-model="MonthFee"  :class="{ 'error': !monthFeeTest }"  placeholder="请输入金额" type="number"></mt-field>
@@ -65,7 +65,7 @@
         return this.roleId === '1'
       },
       needTest () {
-        return true // new Date() > this.strToDate(this.dateItem[4]) && this.canEdit
+        return new Date() > this.strToDate(this.dateItem[4]) && this.canEdit
       },
       weeklyFeeTest () {
         return !this.needTest || (this.needTest && this.WeeklyFee !== '' && this.WeeklyFee !== null)
@@ -99,11 +99,19 @@
         hasEdit: false, // 判断是否编辑过
         canEdit: true,
         testSuccess: [true, true, true, true, true],
-        dataSuccess: false
+        dataSuccess: false,
+        weeklyUserId: ''
       }
     },
     beforeRouteEnter (to, from, next) {
       next(vm => {
+        let routeUserId = vm.$route.params.id
+        if (routeUserId !== undefined && routeUserId.length > 31) {
+          vm.weeklyUserId = routeUserId
+        } else {
+          vm.weeklyUserId = vm.userId
+          vm.appTitle = '我的周报'
+        }
         vm.weeklyChange()
       })
     },
@@ -130,13 +138,6 @@
         this.Sunday = data.Weekly.Sunday
         this.WeekIdentified = data.Weekly.WeekIdentified
         this.weeklyContent = data.WeeklyContent
-        if (this.WeekIdentified < this.getWeekIdentified(new Date())) {
-          this.editOrNot = false
-          this.canEdit = false
-        } else {
-          this.editOrNot = true
-          this.canEdit = true
-        }
       },
       setHasEdit () {
         if (this.canEdit) {
@@ -213,7 +214,8 @@
       },
       weeklyChange () {
         this.loading('加载数据中...')
-        this.$http.get('/api/WUApi/GetWeeklyByWxIdAndIndent?wxId=' + this.wxId + '&weekIdentified=' + this.getWeekIdentified(this.date))
+        let url = '/api/WUApi/GetWeeklyByUserIdAndIndent?userId=' + this.weeklyUserId + '&weekIdentified=' + this.getWeekIdentified(this.date)
+        this.$http.get(url)
         .then(response => {
           if (response.data !== '1') {
             this.initWeeklyData(response.data)
@@ -226,7 +228,14 @@
             this.weeklyContent = []
             this.editOrNot = true
             this.canEdit = true
-            Toast('您本周还未填写周报，请填写~')
+            Toast('本周还未填写周报')
+          }
+          if (this.WeekIdentified < this.getWeekIdentified(new Date()) || this.userId !== this.weeklyUserId) {
+            this.editOrNot = false
+            this.canEdit = false
+          } else {
+            this.editOrNot = true
+            this.canEdit = true
           }
           this.weeklyDate = new Date(this.date)
           this.oneDayInit = true

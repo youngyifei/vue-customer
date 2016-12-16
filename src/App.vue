@@ -8,11 +8,21 @@
         </router-link>
       </mt-header>
       <mt-popup v-model="popupVisible" position="right" style="height:100%;width:200px;">
-        <div style="height:100%;overflow-y :auto;">
-          <mt-cell title="我的报单" :to="'/'" is-link></mt-cell>
-          <mt-cell title="我的客户" :to="'/'" is-link></mt-cell>
-          <mt-cell title="我的周报" :to="'/weekly'" is-link></mt-cell>
-          <mt-cell title="我的信息" :to="'/'"  is-link></mt-cell>
+        <div style="height:100%;overflow-y :auto;position:relative;">
+          <div class="app-menu-head">
+            <img style="height:75px;width:75px;" @error="userImg='/UserImg/log.jpg'" :src="userImg" />
+            <div style="width:90px;line-height: 25px;">
+              {{userName}}<br>
+              {{workNo}}<br>
+              {{deparmentName}}
+            </div>
+          </div>
+          <div>
+            <mt-cell title="我的报单" :to="'/'" is-link></mt-cell>
+            <mt-cell title="我的客户" :to="'/'" is-link></mt-cell>
+            <mt-cell title="我的周报" :to="'/weekly'" is-link></mt-cell>
+            <mt-cell title="我的信息" :to="'/'"  is-link></mt-cell>
+          </div>
         </div>
       </mt-popup>
     </div>
@@ -95,6 +105,15 @@
     bottom:0px;
     left:0px;
     transition: all .45s cubic-bezier(.23,1,.32,1);
+  }
+  .app-menu-head{
+    background-color: #26a2ff;
+    height: 120px;
+    padding: 10px;
+    color: white;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
   }
   .demo-flat-button {
     margin: 12px;

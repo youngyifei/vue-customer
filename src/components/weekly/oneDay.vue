@@ -130,7 +130,7 @@
         let timeArray = this.dateStr.replace(/[ -.:/]/g, '/').split('/')
         let time = new Date(timeArray[0], timeArray[1] - 1, timeArray[2])
         time = time.setDate(time.getDate() + 1) // +1是为了排除掉今天
-        return this.edit && (new Date() > time)
+        return this.edit && (new Date() > time || new Date().getDay() === 5)
       },
       CtransactionTest () { // 公司处理事务是否验证正确
         if (this.NeedTest && this.isCompanyTransaction) {
@@ -244,9 +244,6 @@
       },
       isVisitCustomer () {
         this.toLoadVisitData()
-      },
-      colorIndex () {
-        console.log(1)
       }
     }
   }

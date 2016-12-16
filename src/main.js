@@ -37,13 +37,21 @@ function start () {
     console.log(response)
     if (response.status === 200) {
       let roleId = response.data.RoleName
+      let userName = response.data.userName
+      let workNo = response.data.WorkNo
+      let img = response.data.Img
+      let deparmentName = response.data.DeparmentName
       MintUI.Indicator.close()
       Vue.mixin({
         data () {
           return {
             axios: axios,
             wxId: wxid,
-            roleId: roleId
+            roleId: roleId,
+            userName: userName,
+            workNo: workNo,
+            userImg: img,
+            deparmentName: deparmentName
           }
         }
       })

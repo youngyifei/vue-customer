@@ -56,7 +56,7 @@
     },
     computed: {
       editOrNotMsg () {
-        return this.editOrNot ? '编辑' : '查看'
+        return this.editOrNot ? '编辑' : '预览'
       },
       weeklyNameByDate () {
         return this.getWeekCountByDate()
@@ -68,10 +68,10 @@
         return true // new Date() > this.strToDate(this.dateItem[4]) && this.canEdit
       },
       weeklyFeeTest () {
-        return !this.needTest || (this.needTest && this.WeeklyFee !== '')
+        return !this.needTest || (this.needTest && this.WeeklyFee !== '' && this.WeeklyFee !== null)
       },
       monthFeeTest () {
-        return !this.needTest || (this.needTest && this.MonthFee !== '')
+        return !this.needTest || (this.needTest && this.MonthFee !== '' && this.MonthFee !== null)
       },
       summaryTest () {
         return !this.needTest || (this.needTest && this.Summary.length > 0)
@@ -103,14 +103,17 @@
       }
     },
     beforeRouteEnter (to, from, next) {
-      console.log(to.params.id)
       next(vm => {
         vm.weeklyChange()
       })
     },
     watch: {
       // 如果路由有变化，会再次执行该方法
-      '$route': 'routeChange'
+      '$route': 'routeChange',
+      editOrNot () {
+        let now = this.hasEdit
+        setTimeout(() => { this.hasEdit = now }) // 切换保证hasEdit不变
+      }
     },
     methods: {
       routeChange () {
